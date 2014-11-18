@@ -20,7 +20,7 @@ and servers in key/value store
 
 to remove any that are potentially "down"
 
-
+create array of struct(s) that hold the infomation needed to execute a test
 */
 
 import "encoding/json"
@@ -52,19 +52,21 @@ check(err)
 m := configFile.(map[string]interface{})
 
 for k, v := range m {
-    switch vv := v.(type) {
+    switch v := v.(type) {
     case string:
-        fmt.Println(k, "is string", vv)
+        fmt.Println(k, "is string", v)
     case int:
-        fmt.Println(k, "is int", vv)
+        fmt.Println(k, "is int", v)
     case []interface{}:
         fmt.Println(k, "is an array:")
-        for i, u := range vv {
+        for i, u := range v {
             fmt.Println(i, u)
         }
     default:
         fmt.Println(k, "is of a type I don't know how to handle")
     }
-}
+} // for
+
+fmt.Printf("http://%s/v1/catalog/nodes\n", m["hostname"])
 
 } // main

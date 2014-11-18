@@ -1,6 +1,6 @@
 {
     "hostname": "tsungmaster",
-    "consulclient": ["localhost"],
+    "consulclientip": "172.20.4.60:8500",
     "cpu": "4",
     "maxusers": "30000",
     "ipscan": "eth0"
