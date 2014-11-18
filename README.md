@@ -1,0 +1,1 @@
+Here lies the piece of tsunginator that will: Collect metadata and store it using Consul k/v, injest a config.json file for use in configuring the test xml to the available nodes, and other things really really cool.
