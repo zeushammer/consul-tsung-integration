@@ -1,0 +1,7 @@
+{
+    "hostname": "tsungmaster",
+    "consulclient": ["localhost"],
+    "cpu": "4",
+    "maxusers": "30000",
+    "ipscan": "eth0"
+}
