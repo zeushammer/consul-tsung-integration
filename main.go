@@ -62,7 +62,9 @@ type (
 	}
 )
 
-var (config Config)
+var (
+	config Config
+)
 
 func check(e error) {
 	if e != nil {
@@ -81,7 +83,7 @@ func main() {
 	// get nodes from catalog
 	// return arrary of xml structs built in a new Client struct
 
-    readConfigFile()
+	readConfigFile()
 	getAvailableNodesFromCatalog()
 
 } // main
@@ -92,10 +94,10 @@ func readConfigFile() {
 	flag.Parse()
 	fmt.Println("config file:", *configFilePtr)
 
-    fd, err := os.Open(*configFilePtr)
-    check(err)
-    err = json.NewDecoder(fd).Decode(&config)
-    check(err)
+	fd, err := os.Open(*configFilePtr)
+	check(err)
+	err = json.NewDecoder(fd).Decode(&config)
+	check(err)
 }
 
 func getAvailableNodesFromCatalog() {
