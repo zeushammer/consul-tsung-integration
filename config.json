@@ -1,7 +1,4 @@
 {
     "hostname": "tsungmaster",
-    "consulclientip": "172.20.4.60:8500",
-    "cpu": "4",
-    "maxusers": "30000",
-    "ipscan": "eth0"
+    "consulclientip": "172.20.4.60:8500"
 }
