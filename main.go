@@ -29,11 +29,11 @@ import "encoding/json"
 import "fmt"
 import "flag"
 import "io/ioutil"
-import b64 "encoding/base64"
 import "net/http"
-import "reflect"
+//import "reflect"
 import "encoding/xml"
 import "os"
+import "bytes"
 
 type (
 	Config struct {
@@ -60,6 +60,11 @@ type (
 		Scan    string   `xml:"scan,attr"`
 		Value   string   `xml:"value,attr"`
 	}
+
+    AvailableNodes []struct {
+        Node string `json:"Node"`
+        Address string `json:"Address"`
+    }
 )
 
 var (
@@ -83,13 +88,6 @@ func main() {
 	// get nodes from catalog
 	// return arrary of xml structs built in a new Client struct
 
-	readConfigFile()
-	getAvailableNodesFromCatalog()
-
-} // main
-
-func readConfigFile() {
-
 	configFilePtr := flag.String("f", "config.json", "Fully qualified path to config file [config.json]")
 	flag.Parse()
 	fmt.Println("config file:", *configFilePtr)
@@ -98,6 +96,13 @@ func readConfigFile() {
 	check(err)
 	err = json.NewDecoder(fd).Decode(&config)
 	check(err)
+
+	getAvailableNodesFromCatalog()
+
+} // main
+
+func readConfigFile() {
+
 }
 
 func getAvailableNodesFromCatalog() {
@@ -111,17 +116,16 @@ func getAvailableNodesFromCatalog() {
 	contents, err := ioutil.ReadAll(response.Body)
 	check(err)
 
-	fmt.Printf("%s\n", string(contents))
+	// fmt.Printf("%s\n", string(contents))
 
-	var nodeCatalog []interface{}
-	err = json.Unmarshal(contents, &nodeCatalog)
-	check(err)
+    var catalog AvailableNodes
+    err = json.NewDecoder(bytes.NewReader(contents)).Decode(&catalog)
+    check(err)
 
-	fmt.Println(reflect.TypeOf(nodeCatalog).String())
-
-	json := nodeCatalog[0].(map[string]interface{})
-	_ = json
-
+    for _, node := range catalog {
+        fmt.Println(node.Node)
+        fmt.Println(node.Address)
+    }
 	/*
 	   [
 	       {"Node":"loadnode01","Address":"172.20.4.50"},
