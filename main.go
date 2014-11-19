@@ -102,10 +102,6 @@ func main() {
 
 } // main
 
-func readConfigFile() {
-
-}
-
 func getAvailableNodesFromCatalog() {
 
 	fmt.Printf("http://%s/v1/catalog/nodes\n", config.ConsulClientIP)
