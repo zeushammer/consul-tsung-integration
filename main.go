@@ -69,6 +69,7 @@ type (
 
 var (
 	config Config
+    servers Clients
 )
 
 func check(e error) {
@@ -125,14 +126,8 @@ func getAvailableNodesFromCatalog() {
     for _, node := range catalog {
         fmt.Println(node.Node)
         fmt.Println(node.Address)
+        servers.Clients = append(servers.Clients, *NewXMLclient(node.Node))
     }
-	/*
-	   [
-	       {"Node":"loadnode01","Address":"172.20.4.50"},
-	       {"Node":"loadnode02","Address":"172.20.4.53"},
-	       {"Node":"loadnode03","Address":"172.20.4.68"},
-	       {"Node":"loadnode04","Address":"172.20.4.71"},
-	       {"Node":"tsungmaster","Address":"172.20.4.60"}
-	   ]
-	*/
+
+    fmt.Printf("%+v\n", servers)
 }
