@@ -1,8 +1,7 @@
 Here lies the piece of tsunginator that will: Collect metadata and store it using Consul k/v, injest a config.json file for use in configuring the test xml to the available nodes, and other things really really cool.
 
-
 Scratch notes on writing a consul service check:
-
+```
 ./empd -names
 epmd: up and running on port 4369 with data:
 
@@ -17,3 +16,4 @@ epmd: up and running on port 4369 with data:
 
 #register hostname in key/value store?
 #status updates, running, 
+```
