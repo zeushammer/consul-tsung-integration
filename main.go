@@ -142,9 +142,12 @@ func getAvailableNodesFromCatalog() {
 	check(err)
 
 	for _, node := range catalog {
-		fmt.Println(node.Node)
-		fmt.Println(node.Address)
-		servers.Clients = append(servers.Clients, *NewXMLclient(node.Node))
+		// do not use the hostname as a loadserver
+		if node.Node != config.Hostname {
+			fmt.Println(node.Node)
+			fmt.Println(node.Address)
+			servers.Clients = append(servers.Clients, *NewXMLclient(node.Node))
+		}
 	}
 
 	fmt.Printf("%+v\n\n", servers)
