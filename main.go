@@ -55,6 +55,18 @@ type (
 		Ip       []XMLip  `xml:"ip"`
 	}
 
+	XMLoptions struct {
+		XMLName xml.Name    `xml:"options"`
+		Options []XMLoption `xml:"option"`
+	}
+
+	XMLoption struct {
+		XMLName xml.Name `xml:"option"`
+		Name    string   `xml:"name,attr"`
+		Min     int      `xml:"min,attr"`
+		Max     int      `xml:"max,attr"`
+	}
+
 	XMLip struct {
 		XMLName xml.Name `xml:"ip"`
 		Scan    string   `xml:"scan,attr"`
@@ -163,14 +175,17 @@ func getAvailableNodesFromCatalog() {
 					Arrivalrate: 100,
 					Unit:        "minute"}}}}
 
-	fd, err := os.Open("/home/parallels/Desktop/gocode/src/tsunginator/examples/boris_go_loadtest.xml")
+	options := XMLoptions{Options: []XMLoption{
+		XMLoption{Name: "ports_range", Min: 1024, Max: 65535}}}
+
+	fd, err := os.Open("/home/andrewgerhold/json-and-go/boris_go_loadtest.xml")
 	check(err)
 
 	bufferForFile := new(bytes.Buffer)
 	bufferForFile.ReadFrom(fd)
 	fileAsString := bufferForFile.String()
 
-	modifyXmlValues(fileAsString, load, servers)
+	modifyXmlValues(fileAsString, load, servers, options)
 }
 
 func testOutput() {
@@ -183,7 +198,7 @@ func testOutput() {
 	fmt.Printf("%+v\n", cloud)
 }
 
-func modifyXmlValues(content string, load XMLload, cloud Clients) {
+func modifyXmlValues(content string, load XMLload, cloud Clients, options XMLoptions) {
 	var buffer bytes.Buffer
 	inputReader := strings.NewReader(content)
 	decoder := xml.NewDecoder(inputReader)
@@ -197,6 +212,7 @@ func modifyXmlValues(content string, load XMLload, cloud Clients) {
 			break
 		}
 		switch token := t.(type) {
+        //Damn this feels soooooo hacky
 		case xml.StartElement:
 			fmt.Println(t)
 			switch token.Name.Local {
@@ -204,7 +220,9 @@ func modifyXmlValues(content string, load XMLload, cloud Clients) {
 				encoder.Encode(load)
 			case "clients":
 				encoder.Encode(cloud)
-			case "client", "arrivalphase", "users":
+			case "options":
+				encoder.Encode(options)
+			case "client", "arrivalphase", "users", "option":
 				// allows me to ignore the inner element of this
 				// I probably should explain why this is necessary
 				// I can't remember myself as of right now
@@ -214,7 +232,7 @@ func modifyXmlValues(content string, load XMLload, cloud Clients) {
 			}
 		case xml.EndElement:
 			switch token.Name.Local {
-			case "clients", "load", "client", "arrivalphase", "users":
+			case "clients", "load", "client", "arrivalphase", "users", "options", "option":
 				// allows me to ignore end tag errors like
 				// xml: end tag </client> does not match start tag <tsung>
 			default:

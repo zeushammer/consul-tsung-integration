@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
+<tsung loglevel="notice" dumptraffic="false" version="1.0">
+
+<!-- Client side setup -->
+  <clients>
+    <client host="cmbload01" weight="1" cpu="8" maxusers="40000"></client>
+    <client host="cmbload02" weight="1" cpu="8" maxusers="40000"></client>
+    <client host="cmbload03" weight="1" cpu="8" maxusers="40000"></client>
+  </clients>
+  <!-- Server side setup -->
+<servers>
+  <server host="172.20.5.169" port="6064" type="tcp"></server>
+</servers>
+
+  <load duration='3' unit='minute'>
+  <!-- several arrival phases can be set: for each phase, you can set
+  the mean inter-arrival time between new clients and the phase
+  duration -->
+   <arrivalphase phase="1" duration="3" unit="minute">
+     <users maxnumber="1000" arrivalrate="500" unit="second"></users>
+   </arrivalphase>
+  </load>
+
+  <options>
+  </options>
+
+  <!-- start a session for a http user. the probability is the
+  frequency of this type os session. The sum of all session's
+  probabilities must be 100 -->
+
+<sessions>
+
+<session name='CMBtest' probability='100'  type='ts_http'>
+      <!--1. Send Message
+      -->
+<for from="1" to="1000" var="i">
+  <request>
+    <dyn_variable name="messageidone" xpath="/SendMessageResponse/SendMessageResult/MessageId/text()"/>
+    <http url='/?Action=SendMessage&amp;MessageBody=abc' version='1.1' method='GET'>
+    </http>
+  </request>
+      <!--2. Receive Message
+      -->  
+  <request subst="false">  
+    <http url='/?Action=ReceiveMessage' version='1.1' method='GET'>
+    </http>
+  </request>
+      <!--3. Delete Message
+      -->  
+  <request subst="true">  
+    <http url='/?Action=DeleteMessage&amp;ReceiptHandle=%%_messageidone%%' version='1.1' method='GET'>
+    </http>
+  </request>  
+
+</for>
+</session>
+
+</sessions>
+</tsung>
